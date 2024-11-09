@@ -7,10 +7,6 @@ type TestingT interface {
 	Helper()
 }
 
-type tHelper = interface {
-	Helper()
-}
-
 // ComparisonAssertionFunc is a common function prototype when comparing two values.  Can be useful
 // for table driven tests.
 type ComparisonAssertionFunc func(TestingT, interface{}, interface{}, ...interface{})

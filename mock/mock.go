@@ -591,9 +591,7 @@ type assertExpectationiser interface {
 //
 // Calls may have occurred in any order.
 func AssertExpectationsForObjects(t TestingT, testObjects ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
+	t.Helper()
 	for _, obj := range testObjects {
 		if m, ok := obj.(*Mock); ok {
 			t.Logf("Deprecated mock.AssertExpectationsForObjects(myMock.Mock) use mock.AssertExpectationsForObjects(myMock)")
@@ -614,9 +612,7 @@ func (m *Mock) AssertExpectations(t TestingT) bool {
 	if s, ok := t.(interface{ Skipped() bool }); ok && s.Skipped() {
 		return true
 	}
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
+	t.Helper()
 
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
@@ -651,9 +647,7 @@ func (m *Mock) checkExpectation(call *Call) (bool, string) {
 
 // AssertNumberOfCalls asserts that the method was called expectedCalls times.
 func (m *Mock) AssertNumberOfCalls(t TestingT, methodName string, expectedCalls int) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
+	t.Helper()
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 	var actualCalls int
@@ -668,9 +662,7 @@ func (m *Mock) AssertNumberOfCalls(t TestingT, methodName string, expectedCalls 
 // AssertCalled asserts that the method was called.
 // It can produce a false result when an argument is a pointer type and the underlying value changed after calling the mocked method.
 func (m *Mock) AssertCalled(t TestingT, methodName string, arguments ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
+	t.Helper()
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 	if !m.methodWasCalled(methodName, arguments) {
@@ -691,9 +683,7 @@ func (m *Mock) AssertCalled(t TestingT, methodName string, arguments ...interfac
 // AssertNotCalled asserts that the method was not called.
 // It can produce a false result when an argument is a pointer type and the underlying value changed after calling the mocked method.
 func (m *Mock) AssertNotCalled(t TestingT, methodName string, arguments ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
+	t.Helper()
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 	if m.methodWasCalled(methodName, arguments) {
@@ -706,9 +696,7 @@ func (m *Mock) AssertNotCalled(t TestingT, methodName string, arguments ...inter
 // IsMethodCallable checking that the method can be called
 // If the method was called more than `Repeatability` return false
 func (m *Mock) IsMethodCallable(t TestingT, methodName string, arguments ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
+	t.Helper()
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
@@ -1050,9 +1038,7 @@ func (args Arguments) Diff(objects []interface{}) (string, int) {
 // Assert compares the arguments with the specified objects and fails if
 // they do not exactly match.
 func (args Arguments) Assert(t TestingT, objects ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
+	t.Helper()
 
 	// get the differences
 	diff, diffCount := args.Diff(objects)
@@ -1196,10 +1182,6 @@ var spewConfig = spew.ConfigState{
 	DisablePointerAddresses: true,
 	DisableCapacities:       true,
 	SortKeys:                true,
-}
-
-type tHelper interface {
-	Helper()
 }
 
 func assertOpts(expected, actual interface{}) (expectedFmt, actualFmt string) {

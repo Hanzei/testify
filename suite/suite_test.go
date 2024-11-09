@@ -611,18 +611,11 @@ func TestFailfastSuite(t *testing.T) {
 	callOrderAssert(t, expect, s.callOrder)
 }
 
-type tHelper interface {
-	Helper()
-}
-
 // callOrderAssert is a help with confirms that asserts that expect
 // matches one or more times in callOrder. This makes it compatible
 // with go test flag -count=X where X > 1.
 func callOrderAssert(t *testing.T, expect, callOrder []string) {
-	var ti interface{} = t
-	if h, ok := ti.(tHelper); ok {
-		h.Helper()
-	}
+	t.Helper()
 
 	callCount := len(callOrder)
 	expectCount := len(expect)
