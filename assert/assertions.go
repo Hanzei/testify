@@ -29,6 +29,7 @@ import (
 // TestingT is an interface wrapper around *testing.T
 type TestingT interface {
 	Errorf(format string, args ...interface{})
+	Helper()
 }
 
 // ComparisonAssertionFunc is a common function prototype when comparing two values.  Can be useful
@@ -1984,6 +1985,8 @@ func (*CollectT) Reset() {
 func (*CollectT) Copy(TestingT) {
 	panic("Copy() is deprecated")
 }
+
+func (c *CollectT) Helper() {}
 
 func (c *CollectT) fail() {
 	if !c.failed() {

@@ -37,6 +37,8 @@ func (t *MockT) Errorf(format string, args ...interface{}) {
 	_, _ = format, args
 }
 
+func (t *MockT) Helper() {}
+
 func TestImplements(t *testing.T) {
 
 	Implements(t, (*AssertionTesterInterface)(nil), new(AssertionTesterConformingObject))

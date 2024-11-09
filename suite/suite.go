@@ -11,7 +11,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -21,7 +20,7 @@ var matchMethod = flag.String("testify.m", "", "regular expression to select tes
 // Suite is a basic testing suite with methods for storing and
 // retrieving the current *testing.T context.
 type Suite struct {
-	*assert.Assertions
+	//*assert.Assertions
 
 	mu      sync.RWMutex
 	require *require.Assertions
@@ -43,7 +42,7 @@ func (suite *Suite) SetT(t *testing.T) {
 	suite.mu.Lock()
 	defer suite.mu.Unlock()
 	suite.t = t
-	suite.Assertions = assert.New(t)
+	//suite.Assertions = assert.New(t)
 	suite.require = require.New(t)
 }
 
@@ -68,14 +67,14 @@ func (suite *Suite) Require() *require.Assertions {
 // methods are overridden (for example, you might want to override
 // assert.Assertions with require.Assertions), this method is provided so you
 // can call `suite.Assert().NoError()`.
-func (suite *Suite) Assert() *assert.Assertions {
-	suite.mu.Lock()
-	defer suite.mu.Unlock()
-	if suite.Assertions == nil {
-		panic("'Assert' must not be called before 'Run' or 'SetT'")
-	}
-	return suite.Assertions
-}
+// func (suite *Suite) Assert() *assert.Assertions {
+// 	suite.mu.Lock()
+// 	defer suite.mu.Unlock()
+// 	if suite.Assertions == nil {
+// 		panic("'Assert' must not be called before 'Run' or 'SetT'")
+// 	}
+// 	return suite.Assertions
+// }
 
 func recoverAndFailOnPanic(t *testing.T) {
 	t.Helper()

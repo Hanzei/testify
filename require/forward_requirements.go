@@ -12,5 +12,3 @@ func New(t TestingT) *Assertions {
 		t: t,
 	}
 }
-
-//go:generate sh -c "cd ../_codegen && go build && cd - && ../_codegen/_codegen -output-package=require -template=require_forward.go.tmpl -include-format-funcs"

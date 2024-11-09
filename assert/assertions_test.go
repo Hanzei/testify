@@ -754,6 +754,8 @@ func (t *bufferT) Errorf(format string, args ...interface{}) {
 	t.buf.WriteString(decorate(fmt.Sprintf(format, args...)))
 }
 
+func (t *bufferT) Helper() {}
+
 func TestStringEqual(t *testing.T) {
 	for i, currCase := range []struct {
 		equalWant  string
@@ -2663,6 +2665,9 @@ func (m *mockTestingT) Failed() bool {
 	return m.errorFmt != ""
 }
 
+func (m *mockTestingT) Helper() {
+}
+
 func TestFailNowWithPlainTestingT(t *testing.T) {
 	mockT := &mockTestingT{}
 
@@ -2675,8 +2680,8 @@ type mockFailNowTestingT struct {
 }
 
 func (m *mockFailNowTestingT) Errorf(format string, args ...interface{}) {}
-
-func (m *mockFailNowTestingT) FailNow() {}
+func (m *mockFailNowTestingT) FailNow()                                  {}
+func (m *mockFailNowTestingT) Helper()                                   {}
 
 func TestFailNowWithFullTestingT(t *testing.T) {
 	mockT := &mockFailNowTestingT{}
@@ -3181,6 +3186,8 @@ type captureTestingT struct {
 func (ctt *captureTestingT) Errorf(format string, args ...interface{}) {
 	ctt.msg = fmt.Sprintf(format, args...)
 }
+
+func (ctt *captureTestingT) Helper() {}
 
 func (ctt *captureTestingT) checkResultAndErrMsg(t *testing.T, expectedRes, res bool, expectedErrMsg string) {
 	t.Helper()

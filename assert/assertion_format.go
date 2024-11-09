@@ -244,7 +244,7 @@ func FileExistsf(t TestingT, path string, msg string, args ...interface{}) bool 
 //	assert.Greaterf(t, 2, 1, "error message %s", "formatted")
 //	assert.Greaterf(t, float64(2), float64(1), "error message %s", "formatted")
 //	assert.Greaterf(t, "b", "a", "error message %s", "formatted")
-func Greaterf(t TestingT, e1 interface{}, e2 interface{}, msg string, args ...interface{}) bool {
+func Greaterf[T1 Ordered, T2 Ordered](t TestingT, e1 T1, e2 T2, msg string, args ...interface{}) bool {
 	if h, ok := t.(tHelper); ok {
 		h.Helper()
 	}

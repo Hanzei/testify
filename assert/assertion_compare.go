@@ -7,6 +7,49 @@ import (
 	"time"
 )
 
+// Signed is a constraint that permits any signed integer type.
+// If future releases of Go add new predeclared signed integer types,
+// this constraint will be modified to include them.
+type Signed interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64
+}
+
+// Unsigned is a constraint that permits any unsigned integer type.
+// If future releases of Go add new predeclared unsigned integer types,
+// this constraint will be modified to include them.
+type Unsigned interface {
+	~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr
+}
+
+// Integer is a constraint that permits any integer type.
+// If future releases of Go add new predeclared integer types,
+// this constraint will be modified to include them.
+type Integer interface {
+	Signed | Unsigned
+}
+
+// Float is a constraint that permits any floating-point type.
+// If future releases of Go add new predeclared floating-point types,
+// this constraint will be modified to include them.
+type Float interface {
+	~float32 | ~float64
+}
+
+// Complex is a constraint that permits any complex numeric type.
+// If future releases of Go add new predeclared complex numeric types,
+// this constraint will be modified to include them.
+type Complex interface {
+	~complex64 | ~complex128
+}
+
+// Ordered is a constraint that permits any ordered type: any type
+// that supports the operators < <= >= >.
+// If future releases of Go add new ordered types,
+// this constraint will be modified to include them.
+type Ordered interface {
+	Integer | Float | ~string
+}
+
 // Deprecated: CompareType has only ever been for internal use and has accidentally been published since v1.6.0. Do not use it.
 type CompareType = compareResult
 
@@ -386,7 +429,7 @@ func compare(obj1, obj2 interface{}, kind reflect.Kind) (compareResult, bool) {
 //	assert.Greater(t, 2, 1)
 //	assert.Greater(t, float64(2), float64(1))
 //	assert.Greater(t, "b", "a")
-func Greater(t TestingT, e1 interface{}, e2 interface{}, msgAndArgs ...interface{}) bool {
+func Greater[T1, T2 Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, msgAndArgs ...interface{}) bool {
 	if h, ok := t.(tHelper); ok {
 		h.Helper()
 	}
