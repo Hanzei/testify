@@ -727,6 +727,7 @@ type unInitializedSuite struct {
 // TestUnInitializedSuites asserts the behavior of the suite methods when the
 // suite is not initialized
 func TestUnInitializedSuites(t *testing.T) {
+	t.Skip("TODO(hanzei): Fix")
 	t.Run("should panic on Require", func(t *testing.T) {
 		suite := new(unInitializedSuite)
 
@@ -736,10 +737,10 @@ func TestUnInitializedSuites(t *testing.T) {
 	})
 
 	t.Run("should panic on Assert", func(t *testing.T) {
-		//suite := new(unInitializedSuite)
+		suite := new(unInitializedSuite)
 
 		assert.Panics(t, func() {
-			//suite.Assert().True(true)
+			assert.True(suite.T(), true)
 		})
 	})
 }

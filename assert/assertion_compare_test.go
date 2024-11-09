@@ -159,7 +159,7 @@ func TestGreater(t *testing.T) {
 	checkGreater(t, float64(1), float64(2), `"1" is not greater than "2"`)
 	checkGreater(t, uintptr(1), uintptr(2), `"1" is not greater than "2"`)
 	checkGreater(t, time.Time{}, time.Time{}.Add(time.Hour), `"0001-01-01 00:00:00 +0000 UTC" is not greater than "0001-01-01 01:00:00 +0000 UTC"`)
-	checkGreater(t, []byte{1, 1}, []byte{1, 2}, `"1" is not greater than "2"`)
+	checkGreater(t, []byte{1, 1}, []byte{1, 2}, `"[1 1]" is not greater than "[1 2]"`)
 }
 
 func checkGreater[T1, T2 Ordered | []byte | time.Time](t TestingT, less T1, greater T2, msg string) {

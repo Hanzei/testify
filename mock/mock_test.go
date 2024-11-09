@@ -131,7 +131,7 @@ func (m *MockTestingT) Errorf(string, ...interface{}) {
 	m.errorfCount++
 }
 
-func (m *MockTestingT) Helper()
+func (m *MockTestingT) Helper() {}
 
 // FailNow mocks the FailNow call.
 // It panics in order to mimic the FailNow behavior in the sense that

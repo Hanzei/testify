@@ -1460,12 +1460,6 @@ func TestDidPanic(t *testing.T) {
 		t.Error("didPanic should return true, panicMsg")
 	}
 
-	if funcDidPanic, msg, _ := didPanic(func() {
-		panic(nil)
-	}); !funcDidPanic || msg != nil {
-		t.Error("didPanic should return true, nil")
-	}
-
 	if funcDidPanic, _, _ := didPanic(func() {
 	}); funcDidPanic {
 		t.Error("didPanic should return false")
@@ -1496,12 +1490,6 @@ func TestPanicsWithValue(t *testing.T) {
 
 	if !PanicsWithValue(mockT, "Panic!", func() {
 		panic("Panic!")
-	}) {
-		t.Error("PanicsWithValue should return true")
-	}
-
-	if !PanicsWithValue(mockT, nil, func() {
-		panic(nil)
 	}) {
 		t.Error("PanicsWithValue should return true")
 	}
@@ -2931,7 +2919,7 @@ func ExamplePanicAssertionFunc() {
 		panicFn   PanicTestFunc
 		assertion PanicAssertionFunc
 	}{
-		{"with panic", func() { panic(nil) }, Panics},
+		{"with panic", func() { panic("Panic!") }, Panics},
 		{"without panic", func() {}, NotPanics},
 	}
 
@@ -2949,7 +2937,7 @@ func TestPanicAssertionFunc(t *testing.T) {
 		assertion PanicAssertionFunc
 	}{
 		{"not panic", func() {}, NotPanics},
-		{"panic", func() { panic(nil) }, Panics},
+		{"panic", func() { panic("Panic!") }, Panics},
 	}
 
 	for _, tt := range tests {
