@@ -181,34 +181,20 @@ func TestHTTPRequestWithParams(t *testing.T) {
 	Equal(t, "/url?id=12345", got.URL.RequestURI())
 }
 
-// func TestHttpBody(t *testing.T) {
-// 	assert := New(t)
-// 	mockT := new(mockTestingT)
+func TestHttpBody(t *testing.T) {
+	mockT := new(mockTestingT)
 
-// 	assert.True(HTTPBodyContains(mockT, httpHelloName, "GET", "/", url.Values{"name": []string{"World"}}, "Hello, World!"))
-// 	assert.True(HTTPBodyContains(mockT, httpHelloName, "GET", "/", url.Values{"name": []string{"World"}}, "World"))
-// 	assert.False(HTTPBodyContains(mockT, httpHelloName, "GET", "/", url.Values{"name": []string{"World"}}, "world"))
+	True(t, HTTPBodyContains(mockT, httpHelloName, "GET", "/", url.Values{"name": []string{"World"}}, "Hello, World!"))
+	True(t, HTTPBodyContains(mockT, httpHelloName, "GET", "/", url.Values{"name": []string{"World"}}, "World"))
+	False(t, HTTPBodyContains(mockT, httpHelloName, "GET", "/", url.Values{"name": []string{"World"}}, "world"))
 
-// 	assert.False(HTTPBodyNotContains(mockT, httpHelloName, "GET", "/", url.Values{"name": []string{"World"}}, "Hello, World!"))
-// 	assert.False(HTTPBodyNotContains(
-// 		mockT, httpHelloName, "GET", "/", url.Values{"name": []string{"World"}}, "World",
-// 		"Expected the request body to not contain 'World'. But it did.",
-// 	))
-// 	assert.True(HTTPBodyNotContains(mockT, httpHelloName, "GET", "/", url.Values{"name": []string{"World"}}, "world"))
-// 	assert.Contains(mockT.errorString(), "Expected the request body to not contain 'World'. But it did.")
+	False(t, HTTPBodyNotContains(mockT, httpHelloName, "GET", "/", url.Values{"name": []string{"World"}}, "Hello, World!"))
+	False(t, HTTPBodyNotContains(
+		mockT, httpHelloName, "GET", "/", url.Values{"name": []string{"World"}}, "World",
+		"Expected the request body to not contain 'World'. But it did.",
+	))
+	True(t, HTTPBodyNotContains(mockT, httpHelloName, "GET", "/", url.Values{"name": []string{"World"}}, "world"))
+	Contains(t, mockT.errorString(), "Expected the request body to not contain 'World'. But it did.")
 
-// 	assert.True(HTTPBodyContains(mockT, httpReadBody, "GET", "/", nil, "hello"))
-// }
-
-// func TestHttpBodyWrappers(t *testing.T) {
-// 	assert := New(t)
-// 	mockAssert := New(new(testing.T))
-
-// 	assert.True(mockAssert.HTTPBodyContains(httpHelloName, "GET", "/", url.Values{"name": []string{"World"}}, "Hello, World!"))
-// 	assert.True(mockAssert.HTTPBodyContains(httpHelloName, "GET", "/", url.Values{"name": []string{"World"}}, "World"))
-// 	assert.False(mockAssert.HTTPBodyContains(httpHelloName, "GET", "/", url.Values{"name": []string{"World"}}, "world"))
-
-// 	assert.False(mockAssert.HTTPBodyNotContains(httpHelloName, "GET", "/", url.Values{"name": []string{"World"}}, "Hello, World!"))
-// 	assert.False(mockAssert.HTTPBodyNotContains(httpHelloName, "GET", "/", url.Values{"name": []string{"World"}}, "World"))
-// 	assert.True(mockAssert.HTTPBodyNotContains(httpHelloName, "GET", "/", url.Values{"name": []string{"World"}}, "world"))
-// }
+	True(t, HTTPBodyContains(mockT, httpReadBody, "GET", "/", nil, "hello"))
+}
