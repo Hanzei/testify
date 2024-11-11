@@ -244,15 +244,15 @@ func (suite *SuiteTester) TestSubtest() {
 		{"first"},
 		{"second"},
 	} {
-		//suiteT := suite.T()
+		suiteT := suite.T()
 		suite.Run(t.testName, func() {
 			// We should get a different *testing.T for subtests, so that
 			// go test recognizes them as proper subtests for output formatting
 			// and running individual subtests
-			//subTestT := suite.T()
-			// suite.NotEqual(subTestT, suiteT)
+			subTestT := suite.T()
+			assert.NotEqual(suiteT, suiteT, subTestT)
 		})
-		//suite.Equal(suiteT, suite.T())
+		assert.Equal(suiteT, suiteT, suite.T())
 	}
 }
 
@@ -529,7 +529,7 @@ func (s *suiteWithStats) HandleStats(suiteName string, stats *SuiteInformation) 
 }
 
 func (s *suiteWithStats) TestSomething() {
-	//s.Equal(1, 1)
+	assert.Equal(s.T(), 1, 1)
 }
 
 func (s *suiteWithStats) TestPanic() {
@@ -683,8 +683,7 @@ func (s *subtestPanicSuite) TestSubtestPanic() {
 	ok := s.Run("subtest", func() {
 		panic("panic")
 	})
-	_ = ok
-	//s.False(ok, "subtest failure is expected")
+	assert.False(s.T(), ok, "subtest failure is expected")
 }
 
 func TestSubtestPanic(t *testing.T) {
