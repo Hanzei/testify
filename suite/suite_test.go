@@ -398,15 +398,6 @@ func TestSkippingSuiteSetup(t *testing.T) {
 	assert.False(t, suiteTester.toreDown)
 }
 
-func TestSuiteGetters(t *testing.T) {
-	suite := new(SuiteTester)
-	suite.SetT(t)
-	//assert.NotNil(t, suite.Assert())
-	//assert.Equal(t, suite.Assertions, suite.Assert())
-	assert.NotNil(t, suite.Require())
-	assert.Equal(t, suite.require, suite.Require())
-}
-
 type SuiteLoggingTester struct {
 	Suite
 }

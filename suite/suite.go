@@ -10,8 +10,6 @@ import (
 	"sync"
 	"testing"
 	"time"
-
-	"github.com/stretchr/testify/require"
 )
 
 var allTestsFilter = func(_, _ string) (bool, error) { return true, nil }
@@ -20,11 +18,8 @@ var matchMethod = flag.String("testify.m", "", "regular expression to select tes
 // Suite is a basic testing suite with methods for storing and
 // retrieving the current *testing.T context.
 type Suite struct {
-	//*assert.Assertions
-
-	mu      sync.RWMutex
-	require *require.Assertions
-	t       *testing.T
+	mu sync.RWMutex
+	t  *testing.T
 
 	// Parent suite to have access to the implemented methods of parent struct
 	s TestingSuite
@@ -42,8 +37,6 @@ func (suite *Suite) SetT(t *testing.T) {
 	suite.mu.Lock()
 	defer suite.mu.Unlock()
 	suite.t = t
-	//suite.Assertions = assert.New(t)
-	suite.require = require.New(t)
 }
 
 // SetS needs to set the current test suite as parent
@@ -51,30 +44,6 @@ func (suite *Suite) SetT(t *testing.T) {
 func (suite *Suite) SetS(s TestingSuite) {
 	suite.s = s
 }
-
-// Require returns a require context for suite.
-func (suite *Suite) Require() *require.Assertions {
-	suite.mu.Lock()
-	defer suite.mu.Unlock()
-	if suite.require == nil {
-		panic("'Require' must not be called before 'Run' or 'SetT'")
-	}
-	return suite.require
-}
-
-// Assert returns an assert context for suite.  Normally, you can call
-// `suite.NoError(expected, actual)`, but for situations where the embedded
-// methods are overridden (for example, you might want to override
-// assert.Assertions with require.Assertions), this method is provided so you
-// can call `suite.Assert().NoError()`.
-// func (suite *Suite) Assert() *assert.Assertions {
-// 	suite.mu.Lock()
-// 	defer suite.mu.Unlock()
-// 	if suite.Assertions == nil {
-// 		panic("'Assert' must not be called before 'Run' or 'SetT'")
-// 	}
-// 	return suite.Assertions
-// }
 
 func recoverAndFailOnPanic(t *testing.T) {
 	t.Helper()
