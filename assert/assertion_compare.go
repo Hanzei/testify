@@ -7,6 +7,56 @@ import (
 	"time"
 )
 
+// Signed is a constraint that permits any signed integer type.
+// If future releases of Go add new predeclared signed integer types,
+// this constraint will be modified to include them.
+type Signed interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64
+}
+
+// Unsigned is a constraint that permits any unsigned integer type.
+// If future releases of Go add new predeclared unsigned integer types,
+// this constraint will be modified to include them.
+type Unsigned interface {
+	~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr
+}
+
+// Integer is a constraint that permits any integer type.
+// If future releases of Go add new predeclared integer types,
+// this constraint will be modified to include them.
+type Integer interface {
+	Signed | Unsigned
+}
+
+// Integer is a constraint that permits any integer type.
+// If future releases of Go add new predeclared integer types,
+// this constraint will be modified to include them.
+type Number interface {
+	Integer | Float
+}
+
+// Float is a constraint that permits any floating-point type.
+// If future releases of Go add new predeclared floating-point types,
+// this constraint will be modified to include them.
+type Float interface {
+	~float32 | ~float64
+}
+
+// Complex is a constraint that permits any complex numeric type.
+// If future releases of Go add new predeclared complex numeric types,
+// this constraint will be modified to include them.
+type Complex interface {
+	~complex64 | ~complex128
+}
+
+// Ordered is a constraint that permits any ordered type: any type
+// that supports the operators < <= >= >.
+// If future releases of Go add new ordered types,
+// this constraint will be modified to include them.
+type Ordered interface {
+	Integer | Float | ~string
+}
+
 // Deprecated: CompareType has only ever been for internal use and has accidentally been published since v1.6.0. Do not use it.
 type CompareType = compareResult
 
@@ -386,10 +436,8 @@ func compare(obj1, obj2 interface{}, kind reflect.Kind) (compareResult, bool) {
 //	assert.Greater(t, 2, 1)
 //	assert.Greater(t, float64(2), float64(1))
 //	assert.Greater(t, "b", "a")
-func Greater(t TestingT, e1 interface{}, e2 interface{}, msgAndArgs ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
+func Greater[T1, T2 Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, msgAndArgs ...interface{}) bool {
+	t.Helper()
 	return compareTwoValues(t, e1, e2, []compareResult{compareGreater}, "\"%v\" is not greater than \"%v\"", msgAndArgs...)
 }
 
@@ -399,10 +447,8 @@ func Greater(t TestingT, e1 interface{}, e2 interface{}, msgAndArgs ...interface
 //	assert.GreaterOrEqual(t, 2, 2)
 //	assert.GreaterOrEqual(t, "b", "a")
 //	assert.GreaterOrEqual(t, "b", "b")
-func GreaterOrEqual(t TestingT, e1 interface{}, e2 interface{}, msgAndArgs ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
+func GreaterOrEqual[T1, T2 Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, msgAndArgs ...interface{}) bool {
+	t.Helper()
 	return compareTwoValues(t, e1, e2, []compareResult{compareGreater, compareEqual}, "\"%v\" is not greater than or equal to \"%v\"", msgAndArgs...)
 }
 
@@ -411,10 +457,8 @@ func GreaterOrEqual(t TestingT, e1 interface{}, e2 interface{}, msgAndArgs ...in
 //	assert.Less(t, 1, 2)
 //	assert.Less(t, float64(1), float64(2))
 //	assert.Less(t, "a", "b")
-func Less(t TestingT, e1 interface{}, e2 interface{}, msgAndArgs ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
+func Less[T1, T2 Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, msgAndArgs ...interface{}) bool {
+	t.Helper()
 	return compareTwoValues(t, e1, e2, []compareResult{compareLess}, "\"%v\" is not less than \"%v\"", msgAndArgs...)
 }
 
@@ -424,10 +468,8 @@ func Less(t TestingT, e1 interface{}, e2 interface{}, msgAndArgs ...interface{})
 //	assert.LessOrEqual(t, 2, 2)
 //	assert.LessOrEqual(t, "a", "b")
 //	assert.LessOrEqual(t, "b", "b")
-func LessOrEqual(t TestingT, e1 interface{}, e2 interface{}, msgAndArgs ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
+func LessOrEqual[T1, T2 Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, msgAndArgs ...interface{}) bool {
+	t.Helper()
 	return compareTwoValues(t, e1, e2, []compareResult{compareLess, compareEqual}, "\"%v\" is not less than or equal to \"%v\"", msgAndArgs...)
 }
 
@@ -435,30 +477,26 @@ func LessOrEqual(t TestingT, e1 interface{}, e2 interface{}, msgAndArgs ...inter
 //
 //	assert.Positive(t, 1)
 //	assert.Positive(t, 1.23)
-func Positive(t TestingT, e interface{}, msgAndArgs ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
-	zero := reflect.Zero(reflect.TypeOf(e))
-	return compareTwoValues(t, e, zero.Interface(), []compareResult{compareGreater}, "\"%v\" is not positive", msgAndArgs...)
+//
+// TODO(hanzei): Are there cases that [Interface] doesn't cover?
+func Positive[T Number](t TestingT, e T, msgAndArgs ...interface{}) bool {
+	t.Helper()
+	var e2 T
+	return compareTwoValues(t, e, e2, []compareResult{compareGreater}, "\"%v\" is not positive", msgAndArgs...)
 }
 
 // Negative asserts that the specified element is negative
 //
 //	assert.Negative(t, -1)
 //	assert.Negative(t, -1.23)
-func Negative(t TestingT, e interface{}, msgAndArgs ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
-	zero := reflect.Zero(reflect.TypeOf(e))
-	return compareTwoValues(t, e, zero.Interface(), []compareResult{compareLess}, "\"%v\" is not negative", msgAndArgs...)
+func Negative[T Number](t TestingT, e T, msgAndArgs ...interface{}) bool {
+	t.Helper()
+	var e2 T
+	return compareTwoValues(t, e, e2, []compareResult{compareLess}, "\"%v\" is not negative", msgAndArgs...)
 }
 
 func compareTwoValues(t TestingT, e1 interface{}, e2 interface{}, allowedComparesResults []compareResult, failMessage string, msgAndArgs ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
+	t.Helper()
 
 	e1Kind := reflect.ValueOf(e1).Kind()
 	e2Kind := reflect.ValueOf(e2).Kind()

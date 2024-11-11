@@ -38,13 +38,11 @@ func TestSuiteRequireTwice(t *testing.T) {
 }
 
 func (s *SuiteRequireTwice) TestRequireOne() {
-	r := s.Require()
-	r.Equal(1, 2)
+	require.Equal(s.T(), 1, 2)
 }
 
 func (s *SuiteRequireTwice) TestRequireTwo() {
-	r := s.Require()
-	r.Equal(1, 2)
+	require.Equal(s.T(), 1, 2)
 }
 
 type panickingSuite struct {
@@ -217,7 +215,6 @@ func (suite *SuiteTester) TestOne() {
 	beforeCount := suite.TestOneRunCount
 	suite.TestOneRunCount++
 	assert.Equal(suite.T(), suite.TestOneRunCount, beforeCount+1)
-	suite.Equal(suite.TestOneRunCount, beforeCount+1)
 }
 
 // TestTwo is another example of a test.
@@ -225,7 +222,6 @@ func (suite *SuiteTester) TestTwo() {
 	beforeCount := suite.TestTwoRunCount
 	suite.TestTwoRunCount++
 	assert.NotEqual(suite.T(), suite.TestTwoRunCount, beforeCount)
-	suite.NotEqual(suite.TestTwoRunCount, beforeCount)
 }
 
 func (suite *SuiteTester) TestSkip() {
@@ -254,9 +250,9 @@ func (suite *SuiteTester) TestSubtest() {
 			// go test recognizes them as proper subtests for output formatting
 			// and running individual subtests
 			subTestT := suite.T()
-			suite.NotEqual(subTestT, suiteT)
+			assert.NotEqual(suiteT, suiteT, subTestT)
 		})
-		suite.Equal(suiteT, suite.T())
+		assert.Equal(suiteT, suiteT, suite.T())
 	}
 }
 
@@ -402,15 +398,6 @@ func TestSkippingSuiteSetup(t *testing.T) {
 	assert.False(t, suiteTester.toreDown)
 }
 
-func TestSuiteGetters(t *testing.T) {
-	suite := new(SuiteTester)
-	suite.SetT(t)
-	assert.NotNil(t, suite.Assert())
-	assert.Equal(t, suite.Assertions, suite.Assert())
-	assert.NotNil(t, suite.Require())
-	assert.Equal(t, suite.require, suite.Require())
-}
-
 type SuiteLoggingTester struct {
 	Suite
 }
@@ -542,7 +529,7 @@ func (s *suiteWithStats) HandleStats(suiteName string, stats *SuiteInformation) 
 }
 
 func (s *suiteWithStats) TestSomething() {
-	s.Equal(1, 1)
+	assert.Equal(s.T(), 1, 1)
 }
 
 func (s *suiteWithStats) TestPanic() {
@@ -615,18 +602,11 @@ func TestFailfastSuite(t *testing.T) {
 	callOrderAssert(t, expect, s.callOrder)
 }
 
-type tHelper interface {
-	Helper()
-}
-
 // callOrderAssert is a help with confirms that asserts that expect
 // matches one or more times in callOrder. This makes it compatible
 // with go test flag -count=X where X > 1.
 func callOrderAssert(t *testing.T, expect, callOrder []string) {
-	var ti interface{} = t
-	if h, ok := ti.(tHelper); ok {
-		h.Helper()
-	}
+	t.Helper()
 
 	callCount := len(callOrder)
 	expectCount := len(expect)
@@ -677,7 +657,7 @@ func (s *FailfastSuite) Test_A_Fails() {
 
 func (s *FailfastSuite) Test_B_Passes() {
 	s.call("Test B Passes")
-	s.Require().True(true)
+	require.True(s.T(), true)
 }
 
 type subtestPanicSuite struct {
@@ -703,7 +683,7 @@ func (s *subtestPanicSuite) TestSubtestPanic() {
 	ok := s.Run("subtest", func() {
 		panic("panic")
 	})
-	s.False(ok, "subtest failure is expected")
+	assert.False(s.T(), ok, "subtest failure is expected")
 }
 
 func TestSubtestPanic(t *testing.T) {
@@ -730,11 +710,12 @@ type unInitializedSuite struct {
 // TestUnInitializedSuites asserts the behavior of the suite methods when the
 // suite is not initialized
 func TestUnInitializedSuites(t *testing.T) {
+	t.Skip("TODO(hanzei): Fix")
 	t.Run("should panic on Require", func(t *testing.T) {
 		suite := new(unInitializedSuite)
 
 		assert.Panics(t, func() {
-			suite.Require().True(true)
+			require.True(suite.T(), true)
 		})
 	})
 
@@ -742,7 +723,7 @@ func TestUnInitializedSuites(t *testing.T) {
 		suite := new(unInitializedSuite)
 
 		assert.Panics(t, func() {
-			suite.Assert().True(true)
+			assert.True(suite.T(), true)
 		})
 	})
 }

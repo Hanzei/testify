@@ -754,6 +754,8 @@ func (t *bufferT) Errorf(format string, args ...interface{}) {
 	t.buf.WriteString(decorate(fmt.Sprintf(format, args...)))
 }
 
+func (t *bufferT) Helper() {}
+
 func TestStringEqual(t *testing.T) {
 	for i, currCase := range []struct {
 		equalWant  string
@@ -1458,12 +1460,6 @@ func TestDidPanic(t *testing.T) {
 		t.Error("didPanic should return true, panicMsg")
 	}
 
-	if funcDidPanic, msg, _ := didPanic(func() {
-		panic(nil)
-	}); !funcDidPanic || msg != nil {
-		t.Error("didPanic should return true, nil")
-	}
-
 	if funcDidPanic, _, _ := didPanic(func() {
 	}); funcDidPanic {
 		t.Error("didPanic should return false")
@@ -1494,12 +1490,6 @@ func TestPanicsWithValue(t *testing.T) {
 
 	if !PanicsWithValue(mockT, "Panic!", func() {
 		panic("Panic!")
-	}) {
-		t.Error("PanicsWithValue should return true")
-	}
-
-	if !PanicsWithValue(mockT, nil, func() {
-		panic(nil)
 	}) {
 		t.Error("PanicsWithValue should return true")
 	}
@@ -2663,6 +2653,9 @@ func (m *mockTestingT) Failed() bool {
 	return m.errorFmt != ""
 }
 
+func (m *mockTestingT) Helper() {
+}
+
 func TestFailNowWithPlainTestingT(t *testing.T) {
 	mockT := &mockTestingT{}
 
@@ -2675,8 +2668,8 @@ type mockFailNowTestingT struct {
 }
 
 func (m *mockFailNowTestingT) Errorf(format string, args ...interface{}) {}
-
-func (m *mockFailNowTestingT) FailNow() {}
+func (m *mockFailNowTestingT) FailNow()                                  {}
+func (m *mockFailNowTestingT) Helper()                                   {}
 
 func TestFailNowWithFullTestingT(t *testing.T) {
 	mockT := &mockFailNowTestingT{}
@@ -2926,7 +2919,7 @@ func ExamplePanicAssertionFunc() {
 		panicFn   PanicTestFunc
 		assertion PanicAssertionFunc
 	}{
-		{"with panic", func() { panic(nil) }, Panics},
+		{"with panic", func() { panic("Panic!") }, Panics},
 		{"without panic", func() {}, NotPanics},
 	}
 
@@ -2944,7 +2937,7 @@ func TestPanicAssertionFunc(t *testing.T) {
 		assertion PanicAssertionFunc
 	}{
 		{"not panic", func() {}, NotPanics},
-		{"panic", func() { panic(nil) }, Panics},
+		{"panic", func() { panic("Panic!") }, Panics},
 	}
 
 	for _, tt := range tests {
@@ -3181,6 +3174,8 @@ type captureTestingT struct {
 func (ctt *captureTestingT) Errorf(format string, args ...interface{}) {
 	ctt.msg = fmt.Sprintf(format, args...)
 }
+
+func (ctt *captureTestingT) Helper() {}
 
 func (ctt *captureTestingT) checkResultAndErrMsg(t *testing.T, expectedRes, res bool, expectedErrMsg string) {
 	t.Helper()

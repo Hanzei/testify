@@ -166,6 +166,16 @@ func analyzeCode(scope *types.Scope, docs *doc.Package) (imports.Importer, []tes
 			continue
 		}
 
+		if fdocs.Decl.Type.TypeParams != nil {
+			log.Printf("fdocs.Name: %#+v\n", fdocs.Name)
+			//elem := fdocs.Decl.Type.TypeParams.List[0]
+			//log.Printf("elem.Names[0].Name: %#+v\n", elem.Names[0].Name)
+			//log.Printf("elem.Names[1].Name: %#+v\n", elem.Names[1].Name)
+
+			log.Printf("fn.Type(): %#+v\n", fn.Type().Underlying().(*types.Signature).TypeParams().At(0).Constraint().String())
+
+		}
+
 		funcs = append(funcs, testFunc{*outputPkg, fdocs, fn})
 		importer.AddImportsFrom(sig.Params())
 	}
@@ -247,6 +257,36 @@ func (f *testFunc) Params() string {
 		param := params.At(params.Len() - 1)
 		p += fmt.Sprintf("%s%s ...%s", comma, param.Name(), types.TypeString(param.Type().(*types.Slice).Elem(), f.Qualifier))
 	}
+	return p
+}
+
+func (f *testFunc) TypeParams() string {
+	sig := f.TypeInfo.Type().(*types.Signature)
+	if sig.TypeParams() == nil {
+		return ""
+	}
+
+	//log.Printf("fn.Type(): %#+v\n", fn.Type().Underlying().(*types.Signature).TypeParams().At(0).Constraint().String())
+
+	tParams := sig.TypeParams()
+	p := "["
+	comma := ""
+	to := tParams.Len()
+	var i int
+
+	//if sig.Variadic() {
+	//	to--
+	//}
+	for i = 0; i < to; i++ {
+		param := tParams.At(i)
+		p += fmt.Sprintf("%s%s %s", comma, param.String(), types.TypeString(param.Constraint(), f.Qualifier))
+		comma = ", "
+	}
+	//if sig.Variadic() {
+	//	param := tParams.At(tParams.Len() - 1)
+	//	p += fmt.Sprintf("%s%s ...%s", comma, param.Name(), types.TypeString(param.Type().(*types.Slice).Elem(), f.Qualifier))
+	//}
+	p += "]"
 	return p
 }
 
