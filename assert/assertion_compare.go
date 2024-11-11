@@ -481,8 +481,8 @@ func LessOrEqual[T1, T2 Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, 
 // TODO(hanzei): Are there cases that [Interface] doesn't cover?
 func Positive[T Number](t TestingT, e T, msgAndArgs ...interface{}) bool {
 	t.Helper()
-	zero := reflect.Zero(reflect.TypeOf(e))
-	return compareTwoValues(t, e, zero.Interface(), []compareResult{compareGreater}, "\"%v\" is not positive", msgAndArgs...)
+	var e2 T
+	return compareTwoValues(t, e, e2, []compareResult{compareGreater}, "\"%v\" is not positive", msgAndArgs...)
 }
 
 // Negative asserts that the specified element is negative
@@ -491,8 +491,8 @@ func Positive[T Number](t TestingT, e T, msgAndArgs ...interface{}) bool {
 //	assert.Negative(t, -1.23)
 func Negative[T Number](t TestingT, e T, msgAndArgs ...interface{}) bool {
 	t.Helper()
-	zero := reflect.Zero(reflect.TypeOf(e))
-	return compareTwoValues(t, e, zero.Interface(), []compareResult{compareLess}, "\"%v\" is not negative", msgAndArgs...)
+	var e2 T
+	return compareTwoValues(t, e, e2, []compareResult{compareLess}, "\"%v\" is not negative", msgAndArgs...)
 }
 
 func compareTwoValues(t TestingT, e1 interface{}, e2 interface{}, allowedComparesResults []compareResult, failMessage string, msgAndArgs ...interface{}) bool {
