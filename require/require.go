@@ -1014,7 +1014,7 @@ func Lenf(t TestingT, object interface{}, length int, msg string, args ...interf
 //	require.Less(t, 1, 2)
 //	require.Less(t, float64(1), float64(2))
 //	require.Less(t, "a", "b")
-func Less(t TestingT, e1 interface{}, e2 interface{}, msgAndArgs ...interface{}) {
+func Less[T1 assert.Ordered | []byte | time.Time, T2 assert.Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, msgAndArgs ...interface{}) {
 	t.Helper()
 	if assert.Less(t, e1, e2, msgAndArgs...) {
 		return
@@ -1028,7 +1028,7 @@ func Less(t TestingT, e1 interface{}, e2 interface{}, msgAndArgs ...interface{})
 //	require.LessOrEqual(t, 2, 2)
 //	require.LessOrEqual(t, "a", "b")
 //	require.LessOrEqual(t, "b", "b")
-func LessOrEqual(t TestingT, e1 interface{}, e2 interface{}, msgAndArgs ...interface{}) {
+func LessOrEqual[T1 assert.Ordered | []byte | time.Time, T2 assert.Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, msgAndArgs ...interface{}) {
 	t.Helper()
 	if assert.LessOrEqual(t, e1, e2, msgAndArgs...) {
 		return
@@ -1042,7 +1042,7 @@ func LessOrEqual(t TestingT, e1 interface{}, e2 interface{}, msgAndArgs ...inter
 //	require.LessOrEqualf(t, 2, 2, "error message %s", "formatted")
 //	require.LessOrEqualf(t, "a", "b", "error message %s", "formatted")
 //	require.LessOrEqualf(t, "b", "b", "error message %s", "formatted")
-func LessOrEqualf(t TestingT, e1 interface{}, e2 interface{}, msg string, args ...interface{}) {
+func LessOrEqualf[T1 assert.Ordered | []byte | time.Time, T2 assert.Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, msg string, args ...interface{}) {
 	t.Helper()
 	if assert.LessOrEqualf(t, e1, e2, msg, args...) {
 		return
@@ -1055,7 +1055,7 @@ func LessOrEqualf(t TestingT, e1 interface{}, e2 interface{}, msg string, args .
 //	require.Lessf(t, 1, 2, "error message %s", "formatted")
 //	require.Lessf(t, float64(1), float64(2), "error message %s", "formatted")
 //	require.Lessf(t, "a", "b", "error message %s", "formatted")
-func Lessf(t TestingT, e1 interface{}, e2 interface{}, msg string, args ...interface{}) {
+func Lessf[T1 assert.Ordered | []byte | time.Time, T2 assert.Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, msg string, args ...interface{}) {
 	t.Helper()
 	if assert.Lessf(t, e1, e2, msg, args...) {
 		return

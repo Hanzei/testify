@@ -390,7 +390,7 @@ func Lenf(t TestingT, object interface{}, length int, msg string, args ...interf
 //	assert.Lessf(t, 1, 2, "error message %s", "formatted")
 //	assert.Lessf(t, float64(1), float64(2), "error message %s", "formatted")
 //	assert.Lessf(t, "a", "b", "error message %s", "formatted")
-func Lessf(t TestingT, e1 interface{}, e2 interface{}, msg string, args ...interface{}) bool {
+func Lessf[T1 Ordered | []byte | time.Time, T2 Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, msg string, args ...interface{}) bool {
 	t.Helper()
 	return Less(t, e1, e2, append([]interface{}{msg}, args...)...)
 }
@@ -401,7 +401,7 @@ func Lessf(t TestingT, e1 interface{}, e2 interface{}, msg string, args ...inter
 //	assert.LessOrEqualf(t, 2, 2, "error message %s", "formatted")
 //	assert.LessOrEqualf(t, "a", "b", "error message %s", "formatted")
 //	assert.LessOrEqualf(t, "b", "b", "error message %s", "formatted")
-func LessOrEqualf(t TestingT, e1 interface{}, e2 interface{}, msg string, args ...interface{}) bool {
+func LessOrEqualf[T1 Ordered | []byte | time.Time, T2 Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, msg string, args ...interface{}) bool {
 	t.Helper()
 	return LessOrEqual(t, e1, e2, append([]interface{}{msg}, args...)...)
 }

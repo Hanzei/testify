@@ -450,7 +450,7 @@ func GreaterOrEqual[T1, T2 Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T
 //	assert.Less(t, 1, 2)
 //	assert.Less(t, float64(1), float64(2))
 //	assert.Less(t, "a", "b")
-func Less(t TestingT, e1 interface{}, e2 interface{}, msgAndArgs ...interface{}) bool {
+func Less[T1, T2 Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, msgAndArgs ...interface{}) bool {
 	t.Helper()
 	return compareTwoValues(t, e1, e2, []compareResult{compareLess}, "\"%v\" is not less than \"%v\"", msgAndArgs...)
 }
@@ -461,7 +461,7 @@ func Less(t TestingT, e1 interface{}, e2 interface{}, msgAndArgs ...interface{})
 //	assert.LessOrEqual(t, 2, 2)
 //	assert.LessOrEqual(t, "a", "b")
 //	assert.LessOrEqual(t, "b", "b")
-func LessOrEqual(t TestingT, e1 interface{}, e2 interface{}, msgAndArgs ...interface{}) bool {
+func LessOrEqual[T1, T2 Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, msgAndArgs ...interface{}) bool {
 	t.Helper()
 	return compareTwoValues(t, e1, e2, []compareResult{compareLess, compareEqual}, "\"%v\" is not less than or equal to \"%v\"", msgAndArgs...)
 }
