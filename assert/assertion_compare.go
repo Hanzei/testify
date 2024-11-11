@@ -440,7 +440,7 @@ func Greater[T1, T2 Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, msgA
 //	assert.GreaterOrEqual(t, 2, 2)
 //	assert.GreaterOrEqual(t, "b", "a")
 //	assert.GreaterOrEqual(t, "b", "b")
-func GreaterOrEqual(t TestingT, e1 interface{}, e2 interface{}, msgAndArgs ...interface{}) bool {
+func GreaterOrEqual[T1, T2 Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, msgAndArgs ...interface{}) bool {
 	t.Helper()
 	return compareTwoValues(t, e1, e2, []compareResult{compareGreater, compareEqual}, "\"%v\" is not greater than or equal to \"%v\"", msgAndArgs...)
 }

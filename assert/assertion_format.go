@@ -215,7 +215,7 @@ func Greaterf[T1 Ordered | []byte | time.Time, T2 Ordered | []byte | time.Time](
 //	assert.GreaterOrEqualf(t, 2, 2, "error message %s", "formatted")
 //	assert.GreaterOrEqualf(t, "b", "a", "error message %s", "formatted")
 //	assert.GreaterOrEqualf(t, "b", "b", "error message %s", "formatted")
-func GreaterOrEqualf(t TestingT, e1 interface{}, e2 interface{}, msg string, args ...interface{}) bool {
+func GreaterOrEqualf[T1 Ordered | []byte | time.Time, T2 Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, msg string, args ...interface{}) bool {
 	t.Helper()
 	return GreaterOrEqual(t, e1, e2, append([]interface{}{msg}, args...)...)
 }

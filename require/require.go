@@ -530,7 +530,7 @@ func Greater[T1 assert.Ordered | []byte | time.Time, T2 assert.Ordered | []byte 
 //	require.GreaterOrEqual(t, 2, 2)
 //	require.GreaterOrEqual(t, "b", "a")
 //	require.GreaterOrEqual(t, "b", "b")
-func GreaterOrEqual(t TestingT, e1 interface{}, e2 interface{}, msgAndArgs ...interface{}) {
+func GreaterOrEqual[T1 assert.Ordered | []byte | time.Time, T2 assert.Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, msgAndArgs ...interface{}) {
 	t.Helper()
 	if assert.GreaterOrEqual(t, e1, e2, msgAndArgs...) {
 		return
@@ -544,7 +544,7 @@ func GreaterOrEqual(t TestingT, e1 interface{}, e2 interface{}, msgAndArgs ...in
 //	require.GreaterOrEqualf(t, 2, 2, "error message %s", "formatted")
 //	require.GreaterOrEqualf(t, "b", "a", "error message %s", "formatted")
 //	require.GreaterOrEqualf(t, "b", "b", "error message %s", "formatted")
-func GreaterOrEqualf(t TestingT, e1 interface{}, e2 interface{}, msg string, args ...interface{}) {
+func GreaterOrEqualf[T1 assert.Ordered | []byte | time.Time, T2 assert.Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, msg string, args ...interface{}) {
 	t.Helper()
 	if assert.GreaterOrEqualf(t, e1, e2, msg, args...) {
 		return
@@ -557,7 +557,7 @@ func GreaterOrEqualf(t TestingT, e1 interface{}, e2 interface{}, msg string, arg
 //	require.Greaterf(t, 2, 1, "error message %s", "formatted")
 //	require.Greaterf(t, float64(2), float64(1), "error message %s", "formatted")
 //	require.Greaterf(t, "b", "a", "error message %s", "formatted")
-func Greaterf[T1 assert.Ordered, T2 assert.Ordered](t TestingT, e1 T1, e2 T2, msg string, args ...interface{}) {
+func Greaterf[T1 assert.Ordered | []byte | time.Time, T2 assert.Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, msg string, args ...interface{}) {
 	t.Helper()
 	if assert.Greaterf(t, e1, e2, msg, args...) {
 		return

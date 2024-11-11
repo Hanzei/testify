@@ -160,6 +160,9 @@ func TestGreater(t *testing.T) {
 	checkGreater(t, uintptr(1), uintptr(2), `"1" is not greater than "2"`)
 	checkGreater(t, time.Time{}, time.Time{}.Add(time.Hour), `"0001-01-01 00:00:00 +0000 UTC" is not greater than "0001-01-01 01:00:00 +0000 UTC"`)
 	checkGreater(t, []byte{1, 1}, []byte{1, 2}, `"[1 1]" is not greater than "[1 2]"`)
+
+	// New tests
+	checkGreater(t, 1, 2, `"1" is not greater than "2"`)
 }
 
 func checkGreater[T1, T2 Ordered | []byte | time.Time](t TestingT, less T1, greater T2, msg string) {
@@ -186,32 +189,34 @@ func TestGreaterOrEqual(t *testing.T) {
 	}
 
 	// Check error report
-	for _, currCase := range []struct {
-		less    interface{}
-		greater interface{}
-		msg     string
-	}{
-		{less: "a", greater: "b", msg: `"a" is not greater than or equal to "b"`},
-		{less: int(1), greater: int(2), msg: `"1" is not greater than or equal to "2"`},
-		{less: int8(1), greater: int8(2), msg: `"1" is not greater than or equal to "2"`},
-		{less: int16(1), greater: int16(2), msg: `"1" is not greater than or equal to "2"`},
-		{less: int32(1), greater: int32(2), msg: `"1" is not greater than or equal to "2"`},
-		{less: int64(1), greater: int64(2), msg: `"1" is not greater than or equal to "2"`},
-		{less: uint8(1), greater: uint8(2), msg: `"1" is not greater than or equal to "2"`},
-		{less: uint16(1), greater: uint16(2), msg: `"1" is not greater than or equal to "2"`},
-		{less: uint32(1), greater: uint32(2), msg: `"1" is not greater than or equal to "2"`},
-		{less: uint64(1), greater: uint64(2), msg: `"1" is not greater than or equal to "2"`},
-		{less: float32(1.23), greater: float32(2.34), msg: `"1.23" is not greater than or equal to "2.34"`},
-		{less: float64(1.23), greater: float64(2.34), msg: `"1.23" is not greater than or equal to "2.34"`},
-		{less: uintptr(1), greater: uintptr(2), msg: `"1" is not greater than or equal to "2"`},
-		{less: time.Time{}, greater: time.Time{}.Add(time.Hour), msg: `"0001-01-01 00:00:00 +0000 UTC" is not greater than or equal to "0001-01-01 01:00:00 +0000 UTC"`},
-		{less: []byte{1, 1}, greater: []byte{1, 2}, msg: `"[1 1]" is not greater than or equal to "[1 2]"`},
-	} {
-		out := &outputT{buf: bytes.NewBuffer(nil)}
-		False(t, GreaterOrEqual(out, currCase.less, currCase.greater))
-		Contains(t, out.buf.String(), currCase.msg)
-		Contains(t, out.helpers, "github.com/stretchr/testify/assert.GreaterOrEqual")
-	}
+
+	// Old tests
+	checkGreaterOrEqual(t, "a", "b", `"a" is not greater than or equal to "b"`)
+	checkGreaterOrEqual(t, int(1), int(2), `"1" is not greater than or equal to "2"`)
+	checkGreaterOrEqual(t, int8(1), int8(2), `"1" is not greater than or equal to "2"`)
+	checkGreaterOrEqual(t, int16(1), int16(2), `"1" is not greater than or equal to "2"`)
+	checkGreaterOrEqual(t, int32(1), int32(2), `"1" is not greater than or equal to "2"`)
+	checkGreaterOrEqual(t, int64(1), int64(2), `"1" is not greater than or equal to "2"`)
+	checkGreaterOrEqual(t, uint8(1), uint8(2), `"1" is not greater than or equal to "2"`)
+	checkGreaterOrEqual(t, uint16(1), uint16(2), `"1" is not greater than or equal to "2"`)
+	checkGreaterOrEqual(t, uint32(1), uint32(2), `"1" is not greater than or equal to "2"`)
+	checkGreaterOrEqual(t, uint64(1), uint64(2), `"1" is not greater than or equal to "2"`)
+	checkGreaterOrEqual(t, float32(1), float32(2), `"1" is not greater than or equal to "2"`)
+	checkGreaterOrEqual(t, float64(1), float64(2), `"1" is not greater than or equal to "2"`)
+	checkGreaterOrEqual(t, uintptr(1), uintptr(2), `"1" is not greater than or equal to "2"`)
+	checkGreaterOrEqual(t, time.Time{}, time.Time{}.Add(time.Hour), `"0001-01-01 00:00:00 +0000 UTC" is not greater than or equal to "0001-01-01 01:00:00 +0000 UTC"`)
+	checkGreaterOrEqual(t, []byte{1, 1}, []byte{1, 2}, `"[1 1]" is not greater than or equal to "[1 2]"`)
+
+	// New tests
+	checkGreaterOrEqual(t, 1, 2, `"1" is not greater than or equal to "2"`)
+}
+
+func checkGreaterOrEqual[T1, T2 Ordered | []byte | time.Time](t TestingT, less T1, greater T2, msg string) {
+	t.Helper()
+	out := &outputT{buf: bytes.NewBuffer(nil)}
+	False(t, GreaterOrEqual(out, less, greater))
+	Contains(t, out.buf.String(), msg)
+	Contains(t, out.helpers, "github.com/stretchr/testify/assert.GreaterOrEqual")
 }
 
 func TestLess(t *testing.T) {
