@@ -30,122 +30,97 @@ func httpStatusCode(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusSwitchingProtocols)
 }
 
-// func TestHTTPSuccess(t *testing.T) {
-// 	assert := New(t)
+func TestHTTPSuccess(t *testing.T) {
+	mockT1 := new(testing.T)
+	Equal(t, HTTPSuccess(mockT1, httpOK, "GET", "/", nil), true)
+	False(t, mockT1.Failed())
 
-// 	mockT1 := new(testing.T)
-// 	assert.Equal(HTTPSuccess(mockT1, httpOK, "GET", "/", nil), true)
-// 	assert.False(mockT1.Failed())
+	mockT2 := new(testing.T)
+	Equal(t, HTTPSuccess(mockT2, httpRedirect, "GET", "/", nil), false)
+	True(t, mockT2.Failed())
 
-// 	mockT2 := new(testing.T)
-// 	assert.Equal(HTTPSuccess(mockT2, httpRedirect, "GET", "/", nil), false)
-// 	assert.True(mockT2.Failed())
+	mockT3 := new(mockTestingT)
+	Equal(t, HTTPSuccess(
+		mockT3, httpError, "GET", "/", nil,
+		"was not expecting a failure here",
+	), false)
+	True(t, mockT3.Failed())
+	Contains(t, mockT3.errorString(), "was not expecting a failure here")
 
-// 	mockT3 := new(mockTestingT)
-// 	assert.Equal(HTTPSuccess(
-// 		mockT3, httpError, "GET", "/", nil,
-// 		"was not expecting a failure here",
-// 	), false)
-// 	assert.True(mockT3.Failed())
-// 	assert.Contains(mockT3.errorString(), "was not expecting a failure here")
+	mockT4 := new(testing.T)
+	Equal(t, HTTPSuccess(mockT4, httpStatusCode, "GET", "/", nil), false)
+	True(t, mockT4.Failed())
 
-// 	mockT4 := new(testing.T)
-// 	assert.Equal(HTTPSuccess(mockT4, httpStatusCode, "GET", "/", nil), false)
-// 	assert.True(mockT4.Failed())
+	mockT5 := new(testing.T)
+	Equal(t, HTTPSuccess(mockT5, httpReadBody, "POST", "/", nil), true)
+	False(t, mockT5.Failed())
+}
 
-// 	mockT5 := new(testing.T)
-// 	assert.Equal(HTTPSuccess(mockT5, httpReadBody, "POST", "/", nil), true)
-// 	assert.False(mockT5.Failed())
-// }
+func TestHTTPRedirect(t *testing.T) {
+	mockT1 := new(mockTestingT)
+	Equal(t, HTTPRedirect(
+		mockT1, httpOK, "GET", "/", nil,
+		"was expecting a 3xx status code. Got 200.",
+	), false)
+	True(t, mockT1.Failed())
+	Contains(t, mockT1.errorString(), "was expecting a 3xx status code. Got 200.")
 
-// func TestHTTPRedirect(t *testing.T) {
-// 	assert := New(t)
+	mockT2 := new(testing.T)
+	Equal(t, HTTPRedirect(mockT2, httpRedirect, "GET", "/", nil), true)
+	False(t, mockT2.Failed())
 
-// 	mockT1 := new(mockTestingT)
-// 	assert.Equal(HTTPRedirect(
-// 		mockT1, httpOK, "GET", "/", nil,
-// 		"was expecting a 3xx status code. Got 200.",
-// 	), false)
-// 	assert.True(mockT1.Failed())
-// 	assert.Contains(mockT1.errorString(), "was expecting a 3xx status code. Got 200.")
+	mockT3 := new(testing.T)
+	Equal(t, HTTPRedirect(mockT3, httpError, "GET", "/", nil), false)
+	True(t, mockT3.Failed())
 
-// 	mockT2 := new(testing.T)
-// 	assert.Equal(HTTPRedirect(mockT2, httpRedirect, "GET", "/", nil), true)
-// 	assert.False(mockT2.Failed())
+	mockT4 := new(testing.T)
+	Equal(t, HTTPRedirect(mockT4, httpStatusCode, "GET", "/", nil), false)
+	True(t, mockT4.Failed())
+}
 
-// 	mockT3 := new(testing.T)
-// 	assert.Equal(HTTPRedirect(mockT3, httpError, "GET", "/", nil), false)
-// 	assert.True(mockT3.Failed())
+func TestHTTPError(t *testing.T) {
+	mockT1 := new(testing.T)
+	Equal(t, HTTPError(mockT1, httpOK, "GET", "/", nil), false)
+	True(t, mockT1.Failed())
 
-// 	mockT4 := new(testing.T)
-// 	assert.Equal(HTTPRedirect(mockT4, httpStatusCode, "GET", "/", nil), false)
-// 	assert.True(mockT4.Failed())
-// }
+	mockT2 := new(mockTestingT)
+	Equal(t, HTTPError(
+		mockT2, httpRedirect, "GET", "/", nil,
+		"Expected this request to error out. But it didn't",
+	), false)
+	True(t, mockT2.Failed())
+	Contains(t, mockT2.errorString(), "Expected this request to error out. But it didn't")
 
-// func TestHTTPError(t *testing.T) {
-// 	assert := New(t)
+	mockT3 := new(testing.T)
+	Equal(t, HTTPError(mockT3, httpError, "GET", "/", nil), true)
+	False(t, mockT3.Failed())
 
-// 	mockT1 := new(testing.T)
-// 	assert.Equal(HTTPError(mockT1, httpOK, "GET", "/", nil), false)
-// 	assert.True(mockT1.Failed())
+	mockT4 := new(testing.T)
+	Equal(t, HTTPError(mockT4, httpStatusCode, "GET", "/", nil), false)
+	True(t, mockT4.Failed())
+}
 
-// 	mockT2 := new(mockTestingT)
-// 	assert.Equal(HTTPError(
-// 		mockT2, httpRedirect, "GET", "/", nil,
-// 		"Expected this request to error out. But it didn't",
-// 	), false)
-// 	assert.True(mockT2.Failed())
-// 	assert.Contains(mockT2.errorString(), "Expected this request to error out. But it didn't")
+func TestHTTPStatusCode(t *testing.T) {
+	mockT1 := new(testing.T)
+	Equal(t, HTTPStatusCode(mockT1, httpOK, "GET", "/", nil, http.StatusSwitchingProtocols), false)
+	True(t, mockT1.Failed())
 
-// 	mockT3 := new(testing.T)
-// 	assert.Equal(HTTPError(mockT3, httpError, "GET", "/", nil), true)
-// 	assert.False(mockT3.Failed())
+	mockT2 := new(testing.T)
+	Equal(t, HTTPStatusCode(mockT2, httpRedirect, "GET", "/", nil, http.StatusSwitchingProtocols), false)
+	True(t, mockT2.Failed())
 
-// 	mockT4 := new(testing.T)
-// 	assert.Equal(HTTPError(mockT4, httpStatusCode, "GET", "/", nil), false)
-// 	assert.True(mockT4.Failed())
-// }
+	mockT3 := new(mockTestingT)
+	Equal(t, HTTPStatusCode(
+		mockT3, httpError, "GET", "/", nil, http.StatusSwitchingProtocols,
+		"Expected the status code to be %d", http.StatusSwitchingProtocols,
+	), false)
+	True(t, mockT3.Failed())
+	Contains(t, mockT3.errorString(), "Expected the status code to be 101")
 
-// func TestHTTPStatusCode(t *testing.T) {
-// 	assert := New(t)
-
-// 	mockT1 := new(testing.T)
-// 	assert.Equal(HTTPStatusCode(mockT1, httpOK, "GET", "/", nil, http.StatusSwitchingProtocols), false)
-// 	assert.True(mockT1.Failed())
-
-// 	mockT2 := new(testing.T)
-// 	assert.Equal(HTTPStatusCode(mockT2, httpRedirect, "GET", "/", nil, http.StatusSwitchingProtocols), false)
-// 	assert.True(mockT2.Failed())
-
-// 	mockT3 := new(mockTestingT)
-// 	assert.Equal(HTTPStatusCode(
-// 		mockT3, httpError, "GET", "/", nil, http.StatusSwitchingProtocols,
-// 		"Expected the status code to be %d", http.StatusSwitchingProtocols,
-// 	), false)
-// 	assert.True(mockT3.Failed())
-// 	assert.Contains(mockT3.errorString(), "Expected the status code to be 101")
-
-// 	mockT4 := new(testing.T)
-// 	assert.Equal(HTTPStatusCode(mockT4, httpStatusCode, "GET", "/", nil, http.StatusSwitchingProtocols), true)
-// 	assert.False(mockT4.Failed())
-// }
-
-// func TestHTTPStatusesWrapper(t *testing.T) {
-// 	assert := New(t)
-// 	mockAssert := New(new(testing.T))
-
-// 	assert.Equal(mockAssert.HTTPSuccess(httpOK, "GET", "/", nil), true)
-// 	assert.Equal(mockAssert.HTTPSuccess(httpRedirect, "GET", "/", nil), false)
-// 	assert.Equal(mockAssert.HTTPSuccess(httpError, "GET", "/", nil), false)
-
-// 	assert.Equal(mockAssert.HTTPRedirect(httpOK, "GET", "/", nil), false)
-// 	assert.Equal(mockAssert.HTTPRedirect(httpRedirect, "GET", "/", nil), true)
-// 	assert.Equal(mockAssert.HTTPRedirect(httpError, "GET", "/", nil), false)
-
-// 	assert.Equal(mockAssert.HTTPError(httpOK, "GET", "/", nil), false)
-// 	assert.Equal(mockAssert.HTTPError(httpRedirect, "GET", "/", nil), false)
-// 	assert.Equal(mockAssert.HTTPError(httpError, "GET", "/", nil), true)
-// }
+	mockT4 := new(testing.T)
+	Equal(t, HTTPStatusCode(mockT4, httpStatusCode, "GET", "/", nil, http.StatusSwitchingProtocols), true)
+	False(t, mockT4.Failed())
+}
 
 func httpHelloName(w http.ResponseWriter, r *http.Request) {
 	name := r.FormValue("name")
