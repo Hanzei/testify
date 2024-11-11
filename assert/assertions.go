@@ -24,7 +24,7 @@ import (
 	"github.com/stretchr/testify/assert/yaml"
 )
 
-//go:generate sh -c "cd ../_codegen && go build && cd - && ../_codegen/_codegen -output-package=assert -template=assertion_format.go.tmpl"
+//go:generate sh -c "cd ../_codegen && go build && cd - && rm assertion_format.go && ../_codegen/_codegen -output-package=assert -template=assertion_format.go.tmpl"
 
 // TestingT is an interface wrapper around *testing.T
 type TestingT interface {
