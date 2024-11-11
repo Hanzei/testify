@@ -410,7 +410,7 @@ func LessOrEqualf[T1 Ordered | []byte | time.Time, T2 Ordered | []byte | time.Ti
 //
 //	assert.Negativef(t, -1, "error message %s", "formatted")
 //	assert.Negativef(t, -1.23, "error message %s", "formatted")
-func Negativef(t TestingT, e interface{}, msg string, args ...interface{}) bool {
+func Negativef[T Number](t TestingT, e T, msg string, args ...interface{}) bool {
 	t.Helper()
 	return Negative(t, e, append([]interface{}{msg}, args...)...)
 }
@@ -619,7 +619,9 @@ func PanicsWithValuef(t TestingT, expected interface{}, f PanicTestFunc, msg str
 //
 //	assert.Positivef(t, 1, "error message %s", "formatted")
 //	assert.Positivef(t, 1.23, "error message %s", "formatted")
-func Positivef(t TestingT, e interface{}, msg string, args ...interface{}) bool {
+//
+// TODO(hanzei): Are there cases that [Interface] doesn't cover?
+func Positivef[T Number](t TestingT, e T, msg string, args ...interface{}) bool {
 	t.Helper()
 	return Positive(t, e, append([]interface{}{msg}, args...)...)
 }

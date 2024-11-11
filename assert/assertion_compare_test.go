@@ -326,24 +326,25 @@ func TestPositive(t *testing.T) {
 		t.Error("Positive should return false")
 	}
 
-	// Check error report
-	for _, currCase := range []struct {
-		e   interface{}
-		msg string
-	}{
-		{e: int(-1), msg: `"-1" is not positive`},
-		{e: int8(-1), msg: `"-1" is not positive`},
-		{e: int16(-1), msg: `"-1" is not positive`},
-		{e: int32(-1), msg: `"-1" is not positive`},
-		{e: int64(-1), msg: `"-1" is not positive`},
-		{e: float32(-1.23), msg: `"-1.23" is not positive`},
-		{e: float64(-1.23), msg: `"-1.23" is not positive`},
-	} {
-		out := &outputT{buf: bytes.NewBuffer(nil)}
-		False(t, Positive(out, currCase.e))
-		Contains(t, out.buf.String(), currCase.msg)
-		Contains(t, out.helpers, "github.com/stretchr/testify/assert.Positive")
-	}
+	// Old tests
+	checkPositive(t, int(-1), `"-1" is not positive`)
+	checkPositive(t, int8(-1), `"-1" is not positive`)
+	checkPositive(t, int16(-1), `"-1" is not positive`)
+	checkPositive(t, int32(-1), `"-1" is not positive`)
+	checkPositive(t, int64(-1), `"-1" is not positive`)
+	checkPositive(t, float32(-1), `"-1" is not positive`)
+	checkPositive(t, float64(-1), `"-1" is not positive`)
+
+	// New tests
+	checkPositive(t, -1, `"-1" is not positive`)
+}
+
+func checkPositive[T Number](t TestingT, e T, msg string) {
+	t.Helper()
+	out := &outputT{buf: bytes.NewBuffer(nil)}
+	False(t, Positive(out, e, msg))
+	Contains(t, out.buf.String(), msg)
+	Contains(t, out.helpers, "github.com/stretchr/testify/assert.Positive")
 }
 
 func TestNegative(t *testing.T) {
@@ -366,23 +367,26 @@ func TestNegative(t *testing.T) {
 	}
 
 	// Check error report
-	for _, currCase := range []struct {
-		e   interface{}
-		msg string
-	}{
-		{e: int(1), msg: `"1" is not negative`},
-		{e: int8(1), msg: `"1" is not negative`},
-		{e: int16(1), msg: `"1" is not negative`},
-		{e: int32(1), msg: `"1" is not negative`},
-		{e: int64(1), msg: `"1" is not negative`},
-		{e: float32(1.23), msg: `"1.23" is not negative`},
-		{e: float64(1.23), msg: `"1.23" is not negative`},
-	} {
-		out := &outputT{buf: bytes.NewBuffer(nil)}
-		False(t, Negative(out, currCase.e))
-		Contains(t, out.buf.String(), currCase.msg)
-		Contains(t, out.helpers, "github.com/stretchr/testify/assert.Negative")
-	}
+
+	// Old tests
+	checkNegative(t, int(1), `"1" is not negative`)
+	checkNegative(t, int8(1), `"1" is not negative`)
+	checkNegative(t, int16(1), `"1" is not negative`)
+	checkNegative(t, int32(1), `"1" is not negative`)
+	checkNegative(t, int64(1), `"1" is not negative`)
+	checkNegative(t, float32(1), `"1" is not negative`)
+	checkNegative(t, float64(1), `"1" is not negative`)
+
+	// New tests
+	checkNegative(t, 1, `"1" is not negative`)
+}
+
+func checkNegative[T Number](t TestingT, e T, msg string) {
+	t.Helper()
+	out := &outputT{buf: bytes.NewBuffer(nil)}
+	False(t, Negative(out, e, msg))
+	Contains(t, out.buf.String(), msg)
+	Contains(t, out.helpers, "github.com/stretchr/testify/assert.Negative")
 }
 
 func Test_compareTwoValuesDifferentValuesTypes(t *testing.T) {

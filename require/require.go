@@ -1067,7 +1067,7 @@ func Lessf[T1 assert.Ordered | []byte | time.Time, T2 assert.Ordered | []byte | 
 //
 //	require.Negative(t, -1)
 //	require.Negative(t, -1.23)
-func Negative(t TestingT, e interface{}, msgAndArgs ...interface{}) {
+func Negative[T assert.Number](t TestingT, e T, msgAndArgs ...interface{}) {
 	t.Helper()
 	if assert.Negative(t, e, msgAndArgs...) {
 		return
@@ -1079,7 +1079,7 @@ func Negative(t TestingT, e interface{}, msgAndArgs ...interface{}) {
 //
 //	require.Negativef(t, -1, "error message %s", "formatted")
 //	require.Negativef(t, -1.23, "error message %s", "formatted")
-func Negativef(t TestingT, e interface{}, msg string, args ...interface{}) {
+func Negativef[T assert.Number](t TestingT, e T, msg string, args ...interface{}) {
 	t.Helper()
 	if assert.Negativef(t, e, msg, args...) {
 		return
@@ -1623,7 +1623,9 @@ func Panicsf(t TestingT, f assert.PanicTestFunc, msg string, args ...interface{}
 //
 //	require.Positive(t, 1)
 //	require.Positive(t, 1.23)
-func Positive(t TestingT, e interface{}, msgAndArgs ...interface{}) {
+//
+// TODO(hanzei): Are there cases that [Interface] doesn't cover?
+func Positive[T assert.Number](t TestingT, e T, msgAndArgs ...interface{}) {
 	t.Helper()
 	if assert.Positive(t, e, msgAndArgs...) {
 		return
@@ -1635,7 +1637,9 @@ func Positive(t TestingT, e interface{}, msgAndArgs ...interface{}) {
 //
 //	require.Positivef(t, 1, "error message %s", "formatted")
 //	require.Positivef(t, 1.23, "error message %s", "formatted")
-func Positivef(t TestingT, e interface{}, msg string, args ...interface{}) {
+//
+// TODO(hanzei): Are there cases that [Interface] doesn't cover?
+func Positivef[T assert.Number](t TestingT, e T, msg string, args ...interface{}) {
 	t.Helper()
 	if assert.Positivef(t, e, msg, args...) {
 		return

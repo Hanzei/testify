@@ -28,6 +28,13 @@ type Integer interface {
 	Signed | Unsigned
 }
 
+// Integer is a constraint that permits any integer type.
+// If future releases of Go add new predeclared integer types,
+// this constraint will be modified to include them.
+type Number interface {
+	Integer | Float
+}
+
 // Float is a constraint that permits any floating-point type.
 // If future releases of Go add new predeclared floating-point types,
 // this constraint will be modified to include them.
@@ -470,7 +477,9 @@ func LessOrEqual[T1, T2 Ordered | []byte | time.Time](t TestingT, e1 T1, e2 T2, 
 //
 //	assert.Positive(t, 1)
 //	assert.Positive(t, 1.23)
-func Positive(t TestingT, e interface{}, msgAndArgs ...interface{}) bool {
+//
+// TODO(hanzei): Are there cases that [Interface] doesn't cover?
+func Positive[T Number](t TestingT, e T, msgAndArgs ...interface{}) bool {
 	t.Helper()
 	zero := reflect.Zero(reflect.TypeOf(e))
 	return compareTwoValues(t, e, zero.Interface(), []compareResult{compareGreater}, "\"%v\" is not positive", msgAndArgs...)
@@ -480,7 +489,7 @@ func Positive(t TestingT, e interface{}, msgAndArgs ...interface{}) bool {
 //
 //	assert.Negative(t, -1)
 //	assert.Negative(t, -1.23)
-func Negative(t TestingT, e interface{}, msgAndArgs ...interface{}) bool {
+func Negative[T Number](t TestingT, e T, msgAndArgs ...interface{}) bool {
 	t.Helper()
 	zero := reflect.Zero(reflect.TypeOf(e))
 	return compareTwoValues(t, e, zero.Interface(), []compareResult{compareLess}, "\"%v\" is not negative", msgAndArgs...)
